@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, ScrollView, Alert, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, ScrollView, Alert, Dimensions, Linking } from 'react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -16,15 +16,43 @@ export default function GalleryScreen() {
   const [imageAnalyzing, setImageAnalyzing] = useState(false);
   const { image, setImage, clearImage } = useImageStore();
 
+  const checkAndRequestPermissions = async () => {
+    // Check current permissions first
+    const { status: existingStatus } = await ImagePicker.getMediaLibraryPermissionsAsync();
+    
+    if (existingStatus === 'granted') {
+      return true;
+    }
+
+    // Request permissions if not already granted
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    
+    if (status !== 'granted') {
+      Alert.alert(
+        'Permission Required',
+        'This app needs access to your photo library to select blood smear images. Please enable it in your device settings.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { 
+            text: 'Open Settings',
+            onPress: () => Linking.openSettings()
+          }
+        ]
+      );
+      return false;
+    }
+    
+    return true;
+  };
+
   const pickImage = async () => {
     try {
       setIsLoading(true);
       
-      // Request permissions first
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
-      if (permissionResult.granted === false) {
-        Alert.alert('Permission Required', 'Please allow access to your photo library to select images.');
+      // Check and request permissions
+      const hasPermission = await checkAndRequestPermissions();
+      if (!hasPermission) {
+        setIsLoading(false);
         return;
       }
 

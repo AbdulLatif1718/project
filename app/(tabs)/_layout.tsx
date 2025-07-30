@@ -1,10 +1,20 @@
-import { Tabs } from 'expo-router';
-import { StyleSheet, Platform } from 'react-native';
-import { Camera, Image, ScanLine, Home, FileText, Plus } from 'lucide-react-native';
+import { Redirect, Tabs } from 'expo-router';
+import { StyleSheet, Platform, TouchableOpacity, View, Text } from 'react-native';
+import { Camera, Image, ScanLine, Home, FileText, LogOut } from 'lucide-react-native';
 import Colors from '@/constants/Colors';
 import { BlurView } from 'expo-blur';
+import { useAuthStore } from '@/stores/authStore';
 
 export default function TabLayout() {
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+  const facilityName = useAuthStore(state => state.facilityName);
+  const logout = useAuthStore(state => state.logout);
+
+  // Redirect to login if not authenticated
+  if (!isAuthenticated) {
+    return <Redirect href="/login" />;
+  }
+
   return (
     <Tabs
       screenOptions={{
@@ -14,7 +24,18 @@ export default function TabLayout() {
         tabBarLabelStyle: styles.tabBarLabel,
         tabBarItemStyle: styles.tabBarItem,
         tabBarIconStyle: styles.tabBarIcon,
-        headerShown: false,
+        headerShown: true,
+        header: () => (
+          <View style={styles.header}>
+            <View style={styles.headerContent}>
+              <Text style={styles.headerFacility}>{facilityName}</Text>
+              <Text style={styles.headerSubtitle}>MalariaScan System</Text>
+            </View>
+            <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+              <LogOut size={20} color="#ef4444" />
+            </TouchableOpacity>
+          </View>
+        ),
         tabBarHideOnKeyboard: true,
         tabBarBackground: () => (
           Platform.OS === 'ios' ? (
@@ -186,5 +207,36 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 6,
     color: '#3b82f6',
+  },
+  header: {
+    backgroundColor: '#ffffff',
+    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingHorizontal: 16,
+    paddingBottom: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  headerContent: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  headerFacility: {
+    fontFamily: 'Inter-Bold',
+    fontSize: 16,
+    color: '#1f2937',
+  },
+  headerSubtitle: {
+    fontFamily: 'Inter-Regular',
+    fontSize: 12,
+    color: '#6b7280',
+  },
+  logoutButton: {
+    padding: 8,
+    position: 'absolute',
+    right: 16,
+    top: Platform.OS === 'ios' ? 50 : 20,
   },
 });
