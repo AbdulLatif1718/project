@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, ScrollView, Alert, Dimensions, Linking } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator, ScrollView, Alert, Dimensions } from 'react-native';
+import { useGalleryPermissions } from '@/hooks/useGalleryPermissions';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import * as ImagePicker from 'expo-image-picker';
+import { launchImageLibraryAsync, MediaTypeOptions } from 'expo-image-picker';
 import { Upload, X, Camera, CheckCircle, AlertCircle, Image as ImageIcon, Zap } from 'lucide-react-native';
 import Colors from '@/constants/Colors';
 import { useImageStore } from '@/stores/imageStore';
@@ -16,48 +17,21 @@ export default function GalleryScreen() {
   const [imageAnalyzing, setImageAnalyzing] = useState(false);
   const { image, setImage, clearImage } = useImageStore();
 
-  const checkAndRequestPermissions = async () => {
-    // Check current permissions first
-    const { status: existingStatus } = await ImagePicker.getMediaLibraryPermissionsAsync();
-    
-    if (existingStatus === 'granted') {
-      return true;
-    }
-
-    // Request permissions if not already granted
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
-    if (status !== 'granted') {
-      Alert.alert(
-        'Permission Required',
-        'This app needs access to your photo library to select blood smear images. Please enable it in your device settings.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { 
-            text: 'Open Settings',
-            onPress: () => Linking.openSettings()
-          }
-        ]
-      );
-      return false;
-    }
-    
-    return true;
-  };
+  const { hasPermission, requestPermission } = useGalleryPermissions();
 
   const pickImage = async () => {
     try {
       setIsLoading(true);
       
       // Check and request permissions
-      const hasPermission = await checkAndRequestPermissions();
-      if (!hasPermission) {
+      const permissionGranted = await requestPermission();
+      if (!permissionGranted) {
         setIsLoading(false);
         return;
       }
 
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      const result = await launchImageLibraryAsync({
+        mediaTypes: MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,
