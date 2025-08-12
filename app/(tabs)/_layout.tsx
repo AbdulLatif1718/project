@@ -139,7 +139,8 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: Platform.OS === 'ios' ? 'rgba(255, 255, 255, 0.9)' : '#ffffff',
+    backgroundColor:
+      Platform.OS === 'ios' ? 'rgba(255, 255, 255, 0.9)' : '#ffffff',
     borderTopWidth: Platform.OS === 'ios' ? 0 : 0.5,
     borderTopColor: 'rgba(0, 0, 0, 0.05)',
     height: Platform.OS === 'ios' ? 88 : 70,
@@ -159,20 +160,20 @@ const styles = StyleSheet.create({
     marginBottom: Platform.OS === 'android' ? 16 : 0,
     position: 'absolute',
   },
-  
+
   tabBarLabel: {
     fontFamily: 'Inter-Medium',
     fontSize: 11,
     marginTop: 4,
     letterSpacing: 0.3,
   },
-  
+
   tabBarItem: {
     paddingVertical: 4,
     borderRadius: 12,
     marginHorizontal: 2,
   },
-  
+
   tabBarIcon: {
     marginBottom: 2,
   },
@@ -184,7 +185,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 2,
     marginTop: -8, // Elevate the center tab
   },
-  
+
   centerIcon: {
     width: 56,
     height: 56,
@@ -201,7 +202,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 8,
   },
-  
+
   centerLabel: {
     fontWeight: 'bold',
     fontSize: 12,
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#ffffff',
-    paddingTop: Platform.OS === 'ios' ? 50 : 20,
+    paddingTop: Platform.OS === 'ios' ? 40 : 10,
     paddingHorizontal: 16,
     paddingBottom: 10,
     flexDirection: 'row',
@@ -237,6 +238,6 @@ const styles = StyleSheet.create({
     padding: 8,
     position: 'absolute',
     right: 16,
-    top: Platform.OS === 'ios' ? 50 : 20,
+    top: Platform.OS === 'ios' ? 40 : 10,
   },
 });

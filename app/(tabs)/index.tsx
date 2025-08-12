@@ -174,7 +174,31 @@ const styles = StyleSheet.create({
     backgroundColor: '#f8fafc',
   },
   scrollView: {
-    paddingBottom: 30,
+    paddingBottom: 20,
+  },
+  infoSection: {
+    padding: 20,
+  },
+  infoTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 16,
+  },
+  processSteps: {
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  step: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  stepNumber: {
+    marginRight: 16,
+    backgroundColor: '#ffffff',
+    padding: 8,
+    borderRadius: 4,
+    width: 24
   },
   
   // Header Styles
